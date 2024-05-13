@@ -111,7 +111,7 @@ export const MainTracker: FC<IMainTracker> = ({
                 maxTrackerThreshold[key]
                   ? styles.happy
                   : styles.bad,
-                key === "MEDITATION" &&
+                key !== "FC" &&
                 Number(localState.selectedDatesData[key]) >
                   maxTrackerThreshold[key]
                   ? styles.happy

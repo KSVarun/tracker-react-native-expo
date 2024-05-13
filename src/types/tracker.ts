@@ -1,4 +1,4 @@
-export type TRACKER = "MEDITATION" | "FC";
+export type TRACKER = "MEDITATION" | "FC" | "BEETROOT" | "CARROT";
 
 export interface IGetTrackers {
   result: TRACKER_DATA;
