@@ -1,15 +1,14 @@
 import { FC, useEffect, useState } from "react";
-import { TRACKER, TRACKER_DATA } from "../types/tracker";
+import { RESPONSE_DATA } from "../types/tracker";
 import { useGetTrackerData } from "../hooks/tracker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { STORAGE_KEY } from "../constants/global";
 
 interface ITrackerLoader {
-  trackers: TRACKER[];
   sheet: string;
   render: (
-    data: TRACKER_DATA,
-    dataKeys: TRACKER[],
+    data: RESPONSE_DATA,
+    dataKeys: string[],
     handleForcedRefresh: () => void
   ) => JSX.Element;
 }
@@ -18,19 +17,11 @@ interface ILocalState {
   forcedRefresh: boolean;
 }
 
-export const TrackerLoader: FC<ITrackerLoader> = ({
-  trackers,
-  sheet,
-  render,
-}) => {
+export const TrackerLoader: FC<ITrackerLoader> = ({ sheet, render }) => {
   const [localState, setLocalState] = useState<ILocalState>({
     forcedRefresh: false,
   });
-  const getTrackerQuery = useGetTrackerData(
-    trackers,
-    sheet,
-    localState.forcedRefresh
-  );
+  const getTrackerQuery = useGetTrackerData(sheet, localState.forcedRefresh);
 
   useEffect(() => {
     if (!getTrackerQuery.isFetching) {
@@ -60,9 +51,16 @@ export const TrackerLoader: FC<ITrackerLoader> = ({
     }
   }
 
+  function getDataKeys(result: RESPONSE_DATA) {
+    const dates = Object.keys(result);
+    return Object.keys(result[dates[0]]);
+  }
+
+  const dataKeys = getDataKeys(getTrackerQuery.data.data.result.track);
+
   return render(
-    getTrackerQuery.data.data.result,
-    Object.keys(getTrackerQuery.data.data.result) as TRACKER[],
+    getTrackerQuery.data.data.result.track,
+    dataKeys,
     handleForcedRefresh
   );
 };

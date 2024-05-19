@@ -8,21 +8,17 @@ import {
   Text,
 } from "react-native";
 import { greenColorPalette, redColorPalette } from "../constants/colorPalette";
-import {
-  maxTrackerThreshold,
-  trackerIncrement,
-} from "../constants/thresholdMapper";
-import { TRACKER, TRACKER_DATA } from "../types/tracker";
+import { RESPONSE_DATA } from "../types/tracker";
 
 interface IMainTracker {
-  data: TRACKER_DATA;
-  dataKeys: TRACKER[];
+  data: RESPONSE_DATA;
+  dataKeys: string[];
   handleForcedRefresh: () => void;
 }
 
 interface ILocalState {
   selectedDate: string;
-  selectedDatesData: Record<TRACKER, string> | {} | null;
+  selectedDatesData: Record<string, string> | {} | null;
   refreshing: boolean;
 }
 
@@ -40,15 +36,13 @@ export const MainTracker: FC<IMainTracker> = ({
   });
 
   useEffect(() => {
-    const updatedSelectedDatesData: Record<TRACKER, string[]> | {} = {};
-    dataKeys.forEach((key: TRACKER) => {
-      data[key].forEach((individualData) => {
-        if (individualData[0] === currentDate) {
-          updatedSelectedDatesData[key] = individualData[1] ?? "0";
-        } else {
-          updatedSelectedDatesData[key] = "0";
-        }
-      });
+    const updatedSelectedDatesData: Record<string, string[]> | {} = {};
+    dataKeys.forEach((key: string) => {
+      if (data[currentDate]) {
+        updatedSelectedDatesData[key] = data[currentDate][key];
+      } else {
+        updatedSelectedDatesData[key] = "0";
+      }
     });
 
     setLocalState((currentState) => ({
@@ -69,7 +63,7 @@ export const MainTracker: FC<IMainTracker> = ({
     }, 3000);
   }
 
-  function handlePress(tracker: TRACKER) {
+  function handlePress(tracker: string) {
     const updatedState = { ...localState };
     updatedState.selectedDatesData[tracker] = `${
       Number(updatedState.selectedDatesData[tracker]) +
@@ -78,7 +72,7 @@ export const MainTracker: FC<IMainTracker> = ({
     updateState(updatedState);
   }
 
-  function handleLongPress(tracker: TRACKER) {
+  function handleLongPress(tracker: string) {
     const updatedState = { ...localState };
     if (Number(updatedState.selectedDatesData[tracker]) === 0) {
       return;

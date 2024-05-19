@@ -17,7 +17,6 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaView style={styles.container}>
         <TrackerLoader
-          trackers={["BEETROOT", "CARROT", "FC", "MEDITATION"]}
           sheet="DailyTrack"
           render={(data, dataKeys, handleForcedRefresh) => (
             <MainTracker

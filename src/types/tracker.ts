@@ -1,7 +1,5 @@
-export type TRACKER = "MEDITATION" | "FC" | "BEETROOT" | "CARROT";
-
 export interface IGetTrackers {
-  result: TRACKER_DATA;
+  result: { track: RESPONSE_DATA; configurations: RESPONSE_DATA };
 }
 
-export type TRACKER_DATA = Record<TRACKER, [[string, string]]>;
+export type RESPONSE_DATA = Record<string, Record<string, number>>;

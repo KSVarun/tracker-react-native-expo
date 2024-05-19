@@ -1,13 +1,9 @@
 import axios from "axios";
-import { IGetTrackers, TRACKER } from "../types/tracker";
+import { IGetTrackers } from "../types/tracker";
 
-export function getTrackerData(
-  trackers: TRACKER[],
-  sheet: string
-): Promise<IGetTrackers> {
+export function getTrackerData(sheet: string): Promise<IGetTrackers> {
   const params = {
     name: sheet,
-    usage: trackers.join(","),
   };
-  return axios.get(`http://192.168.29.109:8082/sheets`, { params });
+  return axios.get(`http://192.168.0.107:8082/sheets`, { params });
 }
