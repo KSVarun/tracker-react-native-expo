@@ -8,10 +8,10 @@ import {
   Text,
 } from "react-native";
 import { greenColorPalette, redColorPalette } from "../constants/colorPalette";
-import { RESPONSE_DATA } from "../types/tracker";
+import { IGetTrackers, IResult, RESPONSE_DATA } from "../types/tracker";
 
 interface IMainTracker {
-  data: RESPONSE_DATA;
+  result: IResult;
   dataKeys: string[];
   handleForcedRefresh: () => void;
 }
@@ -25,7 +25,7 @@ interface ILocalState {
 const currentDate = format(new Date(), "dd/MM/yyyy");
 
 export const MainTracker: FC<IMainTracker> = ({
-  data,
+  result,
   dataKeys,
   handleForcedRefresh,
 }) => {
@@ -34,12 +34,13 @@ export const MainTracker: FC<IMainTracker> = ({
     selectedDatesData: null,
     refreshing: false,
   });
+  const configurations = result.configurations;
 
   useEffect(() => {
     const updatedSelectedDatesData: Record<string, string[]> | {} = {};
     dataKeys.forEach((key: string) => {
-      if (data[currentDate]) {
-        updatedSelectedDatesData[key] = data[currentDate][key];
+      if (result.track[currentDate]) {
+        updatedSelectedDatesData[key] = result.track[currentDate][key];
       } else {
         updatedSelectedDatesData[key] = "0";
       }
@@ -49,7 +50,7 @@ export const MainTracker: FC<IMainTracker> = ({
       ...currentState,
       selectedDatesData: updatedSelectedDatesData,
     }));
-  }, [data, dataKeys]);
+  }, [result, dataKeys]);
 
   function updateState(updatedState: ILocalState) {
     setLocalState(updatedState);
@@ -67,7 +68,7 @@ export const MainTracker: FC<IMainTracker> = ({
     const updatedState = { ...localState };
     updatedState.selectedDatesData[tracker] = `${
       Number(updatedState.selectedDatesData[tracker]) +
-      trackerIncrement[tracker]
+      Number(configurations[tracker]["threshold-increment"])
     }`;
     updateState(updatedState);
   }
@@ -79,7 +80,7 @@ export const MainTracker: FC<IMainTracker> = ({
     }
     updatedState.selectedDatesData[tracker] = `${
       Number(updatedState.selectedDatesData[tracker]) -
-      trackerIncrement[tracker]
+      Number(configurations[tracker]["threshold-increment"])
     }`;
     updateState(updatedState);
   }
@@ -102,12 +103,12 @@ export const MainTracker: FC<IMainTracker> = ({
               style={[
                 styles.card,
                 Number(localState.selectedDatesData[key]) ===
-                maxTrackerThreshold[key]
+                Number(configurations[key]["max-threshold-value"])
                   ? styles.happy
                   : styles.bad,
                 key !== "FC" &&
                 Number(localState.selectedDatesData[key]) >
-                  maxTrackerThreshold[key]
+                  Number(configurations[key]["max-threshold-value"])
                   ? styles.happy
                   : null,
               ]}

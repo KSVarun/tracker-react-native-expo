@@ -18,9 +18,9 @@ export default function App() {
       <SafeAreaView style={styles.container}>
         <TrackerLoader
           sheet="DailyTrack"
-          render={(data, dataKeys, handleForcedRefresh) => (
+          render={(result, dataKeys, handleForcedRefresh) => (
             <MainTracker
-              data={data}
+              result={result}
               dataKeys={dataKeys}
               handleForcedRefresh={handleForcedRefresh}
             />
