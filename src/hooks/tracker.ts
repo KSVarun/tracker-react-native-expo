@@ -12,13 +12,13 @@ export const useGetTrackerData = (
   return useQuery(
     ["tracker", sheet, forcedRefresh],
     async () => {
-      // if (forcedRefresh) {
-      //   return getTrackerData(sheet);
-      // }
-      // const data = await getData();
-      // if (data && !forcedRefresh) {
-      //   return { data: { result: data } };
-      // }
+      if (forcedRefresh) {
+        return getTrackerData(sheet);
+      }
+      const data = await getData();
+      if (data && !forcedRefresh) {
+        return { data: { result: data } };
+      }
       return getTrackerData(sheet);
     },
     {
@@ -38,4 +38,8 @@ const getData = async () => {
   } catch (e) {
     console.log(e);
   }
+};
+
+const clearData = async () => {
+  await AsyncStorage.removeItem(STORAGE_KEY);
 };
