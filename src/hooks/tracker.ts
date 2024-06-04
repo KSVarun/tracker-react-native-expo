@@ -16,7 +16,7 @@ export const useGetTrackerData = (
         return getTrackerData(sheet);
       }
       const data = await getData();
-      if (data && !forcedRefresh) {
+      if (data && Object.keys(data.track).length > 0 && !forcedRefresh) {
         return { data: { result: data } };
       }
       return getTrackerData(sheet);
