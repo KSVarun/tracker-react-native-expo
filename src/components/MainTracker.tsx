@@ -103,7 +103,8 @@ export const MainTracker: FC<IMainTracker> = ({
         }
       >
         {localState.selectedDatesData &&
-          dataKeys.map((key) => {
+          dataKeys.map((key, index) => {
+            const isLastCard = index === dataKeys.length - 1;
             return (
               <Pressable
                 style={[
@@ -117,6 +118,7 @@ export const MainTracker: FC<IMainTracker> = ({
                     Number(configurations[key]["max-threshold-value"])
                     ? styles.happy
                     : null,
+                  isLastCard && styles.lastCard,
                 ]}
                 key={key}
                 onPress={() => handlePress(key)}
@@ -162,17 +164,13 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: "#fff",
-    height: "100%",
   },
   scrollView: {
     flex: 1,
     backgroundColor: "#fff",
     padding: 10,
-    paddingBottom: 25,
-    height: "100%",
   },
   scrollViewContent: {
-    height: "100%",
     justifyContent: "flex-end",
     gap: 10,
   },
@@ -185,6 +183,9 @@ const styles = StyleSheet.create({
     borderColor: "#00000",
     flexDirection: "row",
     width: "100%",
+  },
+  lastCard: {
+    marginBottom: 30,
   },
   happy: {
     backgroundColor: greenColorPalette.happy,

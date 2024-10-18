@@ -42,9 +42,6 @@ export const TrackerLoader: FC<ITrackerLoader> = ({ sheet, render }) => {
     return null;
   }
 
-  const jsonValue = JSON.stringify(getTrackerQuery.data.data.result);
-  AsyncStorage.setItem(STORAGE_KEY, jsonValue).catch((err) => console.log(err));
-
   function handleForcedRefresh() {
     if (!localState.forcedRefresh) {
       setLocalState({ forcedRefresh: true });
@@ -56,11 +53,11 @@ export const TrackerLoader: FC<ITrackerLoader> = ({ sheet, render }) => {
     return Object.keys(result[dates[0]]);
   }
 
-  const datesKeys = getDataKeys(getTrackerQuery.data.data.result.track);
+  const dataKeys = getDataKeys(getTrackerQuery.data.data.result.track);
 
   return render(
     getTrackerQuery.data.data.result,
-    datesKeys,
+    dataKeys,
     handleForcedRefresh
   );
 };
