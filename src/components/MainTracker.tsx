@@ -69,7 +69,7 @@ export const MainTracker: FC<IMainTracker> = ({
     }, 3000);
   }
 
-  function handlePress(tracker: string) {
+  function handleCardPress(tracker: string) {
     const updatedState = { ...localState };
     updatedState.selectedDatesData[tracker] = `${
       Number(updatedState.selectedDatesData[tracker]) +
@@ -78,7 +78,7 @@ export const MainTracker: FC<IMainTracker> = ({
     updateState(updatedState);
   }
 
-  function handleLongPress(tracker: string) {
+  function handleCardLongPress(tracker: string) {
     const updatedState = { ...localState };
     if (Number(updatedState.selectedDatesData[tracker]) === 0) {
       return;
@@ -121,8 +121,8 @@ export const MainTracker: FC<IMainTracker> = ({
                   isLastCard && styles.lastCard,
                 ]}
                 key={key}
-                onPress={() => handlePress(key)}
-                onLongPress={() => handleLongPress(key)}
+                onPress={() => handleCardPress(key)}
+                onLongPress={() => handleCardLongPress(key)}
               >
                 <Text>{key}</Text>
                 <Text>{localState.selectedDatesData[key] ?? ""}</Text>

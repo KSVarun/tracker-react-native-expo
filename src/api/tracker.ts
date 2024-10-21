@@ -9,5 +9,5 @@ export function getTrackerData(sheet: string): Promise<IGetTrackers> {
 }
 
 export function updateTrackerData(values: string[]) {
-  return axios.put(`http://192.168.29.109:8082/sheets`, { values: [values] });
+  return axios.put(`http://192.168.29.109:8082/sheets`, { values });
 }
