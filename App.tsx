@@ -6,10 +6,12 @@ import {
   View,
 } from "react-native";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MainTracker } from "./src/components/MainTracker";
-import { TrackerLoader } from "./src/dataLoaders/TrackerLoader";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
+import { GraphContainer } from "./src/components/GraphContainer";
+import "react-native-reanimated";
+import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +24,25 @@ export const queryClient = new QueryClient({
 
 export default function App() {
   const [authenticated, setAuthenticated] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const loadFonts = async () => {
+    await Font.loadAsync({
+      "Lexend-VariableFont": require("./src/fonts/Lexend-VariableFont_wght.ttf"),
+    });
+    setFontsLoaded(true);
+  };
+
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return null; // Optionally, you can return a loading indicator here
+  }
+
+  SplashScreen.hideAsync(); // Hide the splash screen once fonts are loaded
 
   const authenticate = async () => {
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
@@ -45,27 +66,19 @@ export default function App() {
 
   return (
     <Fragment>
-      {authenticated ? (
-        <QueryClientProvider client={queryClient}>
-          <SafeAreaView style={styles.container}>
-            <TrackerLoader
-              sheet="DailyTrack"
-              render={(result, dataKeys, handleForcedRefresh) => (
-                <MainTracker
-                  result={result}
-                  dataKeys={dataKeys}
-                  handleForcedRefresh={handleForcedRefresh}
-                />
-              )}
-            />
-            <StatusBar />
-          </SafeAreaView>
-        </QueryClientProvider>
-      ) : (
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaView style={styles.container}>
+          <GraphContainer />
+          <StatusBar />
+        </SafeAreaView>
+      </QueryClientProvider>
+      {/* {authenticated ? (
+      )
+       : (
         <View style={styles.unlockButton}>
           <Button title="Unlock with Biometrics" onPress={authenticate} />
         </View>
-      )}
+      )} */}
     </Fragment>
   );
 }
