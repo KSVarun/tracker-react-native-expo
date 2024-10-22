@@ -66,19 +66,18 @@ export default function App() {
 
   return (
     <Fragment>
-      <QueryClientProvider client={queryClient}>
-        <SafeAreaView style={styles.container}>
-          <GraphContainer />
-          <StatusBar />
-        </SafeAreaView>
-      </QueryClientProvider>
-      {/* {authenticated ? (
-      )
-       : (
+      {authenticated ? (
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaView style={styles.container}>
+            <GraphContainer />
+            <StatusBar />
+          </SafeAreaView>
+        </QueryClientProvider>
+      ) : (
         <View style={styles.unlockButton}>
           <Button title="Unlock with Biometrics" onPress={authenticate} />
         </View>
-      )} */}
+      )}
     </Fragment>
   );
 }

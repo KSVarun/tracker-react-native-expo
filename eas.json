@@ -7,7 +7,6 @@
   "build": {
     "preview": {
       "distribution": "internal",
-      "developmentClient": true,
       "ios": {
         "enterpriseProvisioning": "adhoc"
       },
