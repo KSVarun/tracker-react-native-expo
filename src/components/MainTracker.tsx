@@ -10,11 +10,11 @@ import {
   View,
 } from "react-native";
 import { greenColorPalette, redColorPalette } from "../constants/colorPalette";
-import { IGetTrackers, IResult, RESPONSE_DATA } from "../types/tracker";
+import { IGetTrackers } from "../types/tracker";
 import { updateTrackerData } from "../api/tracker";
 
 interface IMainTracker {
-  result: IResult;
+  result: IGetTrackers;
   dataKeys: string[]; //these are the different behavior trackers, for example Meditation, Exercise etc
   handleForcedRefresh: () => void;
 }
@@ -151,7 +151,9 @@ export const MainTracker: FC<IMainTracker> = ({
                 localState.selectedDate,
                 ...Object.values(localState.selectedDatesData),
               ];
-              updateTrackerData(requestData);
+              updateTrackerData(requestData)
+                .then(() => {})
+                .catch((err) => console.log(err));
             }}
           />
         </View>

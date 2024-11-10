@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { IResult, RESPONSE_DATA } from "../types/tracker";
+import { IGetTrackers, RESPONSE_DATA } from "../types/tracker";
 import { useGetTrackerData } from "../hooks/tracker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { STORAGE_KEY } from "../constants/global";
@@ -7,7 +7,7 @@ import { STORAGE_KEY } from "../constants/global";
 interface ITrackerLoader {
   sheet: string;
   render: (
-    result: IResult,
+    result: IGetTrackers,
     dataKeys: string[],
     handleForcedRefresh: () => void
   ) => JSX.Element;
@@ -53,11 +53,7 @@ export const TrackerLoader: FC<ITrackerLoader> = ({ sheet, render }) => {
     return Object.keys(result[dates[0]]);
   }
 
-  const dataKeys = getDataKeys(getTrackerQuery.data.data.result.track);
+  const dataKeys = getDataKeys(getTrackerQuery.data.data.track);
 
-  return render(
-    getTrackerQuery.data.data.result,
-    dataKeys,
-    handleForcedRefresh
-  );
+  return render(getTrackerQuery.data.data, dataKeys, handleForcedRefresh);
 };
