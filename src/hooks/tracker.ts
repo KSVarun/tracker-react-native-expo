@@ -19,7 +19,6 @@ export const useGetTrackerData = (
     },
     {
       keepPreviousData: true,
-      onError(err) {},
     }
   );
 };

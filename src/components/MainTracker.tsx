@@ -7,11 +7,14 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { greenColorPalette, redColorPalette } from "../constants/colorPalette";
 import { IGetTrackers } from "../types/tracker";
 import { updateTrackerData } from "../api/tracker";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { Snackbar } from "react-native-paper";
 
 interface IMainTracker {
   result: IGetTrackers;
@@ -23,7 +26,7 @@ interface ILocalState {
   selectedDate: string;
   selectedDatesData: Record<string, string> | {} | null;
   refreshing: boolean;
-  bottomDrawerExpanded: boolean;
+  updateSnackbarMessage: string;
 }
 
 const currentDate = format(new Date(), "dd/MM/yyyy");
@@ -37,7 +40,7 @@ export const MainTracker: FC<IMainTracker> = ({
     selectedDate: currentDate,
     selectedDatesData: null,
     refreshing: false,
-    bottomDrawerExpanded: false,
+    updateSnackbarMessage: "",
   });
   const configurations = result.configurations;
 
@@ -106,7 +109,7 @@ export const MainTracker: FC<IMainTracker> = ({
           dataKeys.map((key, index) => {
             const isLastCard = index === dataKeys.length - 1;
             return (
-              <Pressable
+              <View
                 style={[
                   styles.card,
                   Number(localState.selectedDatesData[key]) ===
@@ -121,43 +124,60 @@ export const MainTracker: FC<IMainTracker> = ({
                   isLastCard && styles.lastCard,
                 ]}
                 key={key}
-                onPress={() => handleCardPress(key)}
-                onLongPress={() => handleCardLongPress(key)}
               >
-                <Text>{key}</Text>
-                <Text>{localState.selectedDatesData[key] ?? ""}</Text>
-              </Pressable>
+                <TouchableOpacity
+                  style={styles.plusMinusBtn}
+                  onPress={() => handleCardLongPress(key)}
+                >
+                  <Text style={styles.plusMinusText}>-</Text>
+                </TouchableOpacity>
+                <View style={styles.content}>
+                  <Text>{key}</Text>
+                  <Text>{localState.selectedDatesData[key] ?? ""}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.plusMinusBtn}
+                  onPress={() => handleCardPress(key)}
+                >
+                  <Text style={styles.plusMinusText}>+</Text>
+                </TouchableOpacity>
+              </View>
             );
           })}
       </ScrollView>
-      <Pressable
+      <TouchableOpacity
+        style={styles.uploadBtn}
         onPress={() => {
-          updateState({
-            ...localState,
-            bottomDrawerExpanded: !localState.bottomDrawerExpanded,
-          });
+          const requestData = [
+            localState.selectedDate,
+            ...Object.values(localState.selectedDatesData),
+          ];
+          updateTrackerData(requestData)
+            .then(() => {
+              updateState({
+                ...localState,
+                updateSnackbarMessage: "Update successful!",
+              });
+            })
+            .catch((err) => {
+              updateState({
+                ...localState,
+                updateSnackbarMessage: "Update failed!",
+              });
+            });
         }}
       >
-        <View
-          style={[
-            styles.bottomDrawer,
-            localState.bottomDrawerExpanded && styles.bottomDrawerExpanded,
-          ]}
-        >
-          <Button
-            title="Update"
-            onPress={() => {
-              const requestData = [
-                localState.selectedDate,
-                ...Object.values(localState.selectedDatesData),
-              ];
-              updateTrackerData(requestData)
-                .then(() => {})
-                .catch((err) => console.log(err));
-            }}
-          />
-        </View>
-      </Pressable>
+        <Icon name="cloud-upload" size={40} color="#fff" />
+      </TouchableOpacity>
+      <Snackbar
+        visible={Boolean(localState.updateSnackbarMessage)}
+        onDismiss={() => {
+          updateState({ ...localState, updateSnackbarMessage: "" });
+        }}
+        duration={3000}
+      >
+        {localState.updateSnackbarMessage}
+      </Snackbar>
     </View>
   );
 };
@@ -178,16 +198,20 @@ const styles = StyleSheet.create({
   },
   card: {
     alignItems: "center",
-    justifyContent: "space-between",
     padding: 10,
     borderWidth: 1,
-    borderRadius: 4,
+    borderRadius: 30,
     borderColor: "#00000",
     flexDirection: "row",
     width: "100%",
   },
+  content: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   lastCard: {
-    marginBottom: 30,
+    marginBottom: 90,
   },
   happy: {
     backgroundColor: greenColorPalette.happy,
@@ -195,21 +219,31 @@ const styles = StyleSheet.create({
   bad: {
     backgroundColor: redColorPalette.bad,
   },
-  bottomDrawer: {
-    position: "absolute",
-    bottom: 0,
-    backgroundColor: "grey",
-    height: 55,
-    transform: [{ translateY: 40 }],
-    width: "100%",
-    display: "flex",
+  plusMinusBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
-  bottomDrawerExpanded: {
-    transform: [{ translateY: 0 }],
+  plusMinusText: {
+    fontSize: 25,
   },
-  updateBtn: {
-    width: "20%",
+  uploadBtn: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#007BFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
 });

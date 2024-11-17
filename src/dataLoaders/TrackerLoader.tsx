@@ -3,6 +3,8 @@ import { IGetTrackers, RESPONSE_DATA } from "../types/tracker";
 import { useGetTrackerData } from "../hooks/tracker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { STORAGE_KEY } from "../constants/global";
+import { TrackerLoaderSkeleton } from "../skeletalLoaders/TrackerLoaderSkeleton";
+import { Snackbar } from "react-native-paper";
 
 interface ITrackerLoader {
   sheet: string;
@@ -34,12 +36,27 @@ export const TrackerLoader: FC<ITrackerLoader> = ({ sheet, render }) => {
     }
   }, [getTrackerQuery.isFetching]);
 
-  if (getTrackerQuery.isIdle || getTrackerQuery.isFetching) {
-    return null;
+  if (getTrackerQuery.isIdle || getTrackerQuery.isLoading) {
+    return <TrackerLoaderSkeleton />;
   }
 
   if (getTrackerQuery.isError) {
-    return null;
+    return (
+      <Snackbar
+        visible={true}
+        onDismiss={() => {}}
+        duration={3000}
+        action={{
+          label: "Fetch failed! Retry",
+          onPress: () => {
+            // Do something when 'Undo' is pressed
+            getTrackerQuery.refetch();
+          },
+        }}
+      >
+        This is a Snackbar!
+      </Snackbar>
+    );
   }
 
   function handleForcedRefresh() {

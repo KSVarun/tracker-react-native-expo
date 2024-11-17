@@ -10,6 +10,7 @@ import { MainTracker } from "./src/components/MainTracker";
 import { TrackerLoader } from "./src/dataLoaders/TrackerLoader";
 import { Fragment, useState } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,17 +49,19 @@ export default function App() {
       {authenticated ? (
         <QueryClientProvider client={queryClient}>
           <SafeAreaView style={styles.container}>
-            <TrackerLoader
-              sheet="DailyTrack"
-              render={(result, dataKeys, handleForcedRefresh) => (
-                <MainTracker
-                  result={result}
-                  dataKeys={dataKeys}
-                  handleForcedRefresh={handleForcedRefresh}
-                />
-              )}
-            />
-            <StatusBar />
+            <SafeAreaProvider>
+              <TrackerLoader
+                sheet="DailyTrack"
+                render={(result, dataKeys, handleForcedRefresh) => (
+                  <MainTracker
+                    result={result}
+                    dataKeys={dataKeys}
+                    handleForcedRefresh={handleForcedRefresh}
+                  />
+                )}
+              />
+              <StatusBar />
+            </SafeAreaProvider>
           </SafeAreaView>
         </QueryClientProvider>
       ) : (
