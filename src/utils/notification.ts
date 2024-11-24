@@ -1,6 +1,7 @@
 import {
   getPermissionsAsync,
   requestPermissionsAsync,
+  setNotificationHandler,
 } from "expo-notifications";
 
 export const registerForPushNotifications = async () => {
@@ -16,3 +17,14 @@ export const registerForPushNotifications = async () => {
   }
   return true;
 };
+
+export const registerForShowingNotificationWhenAppIsInTheForeground =
+  async () => {
+    setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+  };

@@ -11,7 +11,13 @@ import * as LocalAuthentication from "expo-local-authentication";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { Wrapper } from "./src/components/Wrapper";
-import { registerForPushNotifications } from "./src/utils/notification";
+import {
+  registerForPushNotifications,
+  registerForShowingNotificationWhenAppIsInTheForeground,
+} from "./src/utils/notification";
+import { enableScreens } from "react-native-screens";
+
+enableScreens();
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +33,7 @@ export default function App() {
 
   useEffect(() => {
     registerForPushNotifications();
+    registerForShowingNotificationWhenAppIsInTheForeground();
   }, []);
 
   const authenticate = async () => {
