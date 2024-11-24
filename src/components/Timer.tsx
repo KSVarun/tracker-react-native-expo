@@ -16,7 +16,7 @@ export const Timer: FC<ITimerProps> = () => {
               title: "Reminder!",
               body: "This is your local notification.",
             },
-            trigger: 1,
+            trigger: null,
           });
         }}
       />

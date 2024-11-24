@@ -58,13 +58,16 @@ export default function App() {
 
   return (
     <Fragment>
+      <StatusBar
+        hidden={false}
+        barStyle="dark-content" // Options: 'default', 'dark-content', 'light-content'
+      />
       {authenticated ? (
         <QueryClientProvider client={queryClient}>
           <SafeAreaView style={styles.container}>
             <SafeAreaProvider>
               <NavigationContainer>
                 <Wrapper />
-                <StatusBar />
               </NavigationContainer>
             </SafeAreaProvider>
           </SafeAreaView>
@@ -82,6 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    // paddingTop: 40,
   },
   unlockButton: {
     marginTop: "100%",

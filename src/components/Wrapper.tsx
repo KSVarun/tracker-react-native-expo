@@ -10,7 +10,7 @@ interface IWrapperProps {}
 export const Wrapper: FC<IWrapperProps> = () => {
   return (
     <Tab.Navigator
-      initialRouteName="habit"
+      initialRouteName="timer"
       id={undefined}
       screenOptions={{
         headerShown: false,
