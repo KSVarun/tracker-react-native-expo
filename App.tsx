@@ -4,18 +4,14 @@ import {
   StatusBar,
   StyleSheet,
   View,
-  Text,
 } from "react-native";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { MainTracker } from "./src/components/MainTracker";
-import { TrackerLoader } from "./src/dataLoaders/TrackerLoader";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import * as LocalAuthentication from "expo-local-authentication";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-export const Tab = createBottomTabNavigator();
+import { Wrapper } from "./src/components/Wrapper";
+import { registerForPushNotifications } from "./src/utils/notification";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,46 +22,12 @@ export const queryClient = new QueryClient({
   },
 });
 
-function Habit() {
-  return (
-    <TrackerLoader
-      sheet="DailyTrack"
-      render={(result, dataKeys, handleForcedRefresh) => (
-        <MainTracker
-          result={result}
-          dataKeys={dataKeys}
-          handleForcedRefresh={handleForcedRefresh}
-        />
-      )}
-    />
-  );
-}
-
-function Timer() {
-  return (
-    <View>
-      <Text>Timer</Text>
-    </View>
-  );
-}
-
-function Wrapper() {
-  return (
-    <Tab.Navigator
-      initialRouteName="habit"
-      id={undefined}
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Tab.Screen name="habit" component={Habit} />
-      <Tab.Screen name="timer" component={Timer} />
-    </Tab.Navigator>
-  );
-}
-
 export default function App() {
   const [authenticated, setAuthenticated] = useState(true);
+
+  useEffect(() => {
+    registerForPushNotifications();
+  }, []);
 
   const authenticate = async () => {
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
