@@ -60,7 +60,7 @@ export default function App() {
     <Fragment>
       <StatusBar
         hidden={false}
-        barStyle="dark-content" // Options: 'default', 'dark-content', 'light-content'
+        barStyle="light-content" // Options: 'default', 'dark-content', 'light-content'
       />
       {authenticated ? (
         <QueryClientProvider client={queryClient}>
