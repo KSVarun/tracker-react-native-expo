@@ -3,6 +3,7 @@ import { View, Text, Button } from "react-native";
 import * as Notifications from "expo-notifications";
 import { List } from "react-native-paper";
 import { getTimeToRenderFromMilliSeconds } from "../utils/timer";
+import { addSeconds } from "date-fns";
 
 interface ITimerProps {}
 
@@ -32,6 +33,15 @@ const data = [
     ],
     totalTime: 360000,
   },
+  {
+    id: "125",
+    name: "test",
+    steps: [
+      { name: "test1", time: 5 },
+      { name: "test2", time: 5 },
+    ],
+    totalTime: 10,
+  },
 ];
 
 interface ILocalState {
@@ -52,15 +62,24 @@ export const Timer: FC<ITimerProps> = () => {
   }
 
   async function handleAccordionPress(id: string) {
+    // if (id === localState.expandedAccordionId) {
+    //   return;
+    // }
+    // await Notifications.cancelAllScheduledNotificationsAsync();
     setLocalState((state) => ({ ...state, expandedAccordionId: id }));
     const task = data.find((d) => d.id === id);
+
     for (let i = 0; i < task.steps.length; i++) {
-      const res = await wait(task.steps[i].time, task.steps[i].name);
       Notifications.scheduleNotificationAsync({
         content: {
-          title: `${res} timer completed`,
+          title: `${task.steps[i].name} timer completed`,
         },
-        trigger: null,
+        trigger: addSeconds(
+          new Date(),
+          i === 0
+            ? task.steps[i].time
+            : task.steps[i].time + task.steps[i - 1].time
+        ),
       });
     }
   }

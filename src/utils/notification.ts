@@ -2,7 +2,10 @@ import {
   getPermissionsAsync,
   requestPermissionsAsync,
   setNotificationHandler,
+  setNotificationChannelAsync,
+  AndroidImportance,
 } from "expo-notifications";
+import { Platform } from "react-native";
 
 export const registerForPushNotifications = async () => {
   const { status: existingStatus } = await getPermissionsAsync();
@@ -14,6 +17,12 @@ export const registerForPushNotifications = async () => {
   }
   if (finalStatus !== "granted") {
     return null;
+  }
+  if (Platform.OS === "android") {
+    await setNotificationChannelAsync("default", {
+      name: "default",
+      importance: AndroidImportance.DEFAULT,
+    });
   }
   return true;
 };
