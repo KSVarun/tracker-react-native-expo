@@ -37,10 +37,10 @@ const data = [
     id: "125",
     name: "test",
     steps: [
-      { name: "test1", time: 5 },
-      { name: "test2", time: 5 },
+      { name: "test1", time: 5000 },
+      { name: "test2", time: 5000 },
     ],
-    totalTime: 10,
+    totalTime: 10000,
   },
 ];
 
@@ -77,8 +77,8 @@ export const Timer: FC<ITimerProps> = () => {
         trigger: addSeconds(
           new Date(),
           i === 0
-            ? task.steps[i].time
-            : task.steps[i].time + task.steps[i - 1].time
+            ? task.steps[i].time / 1000
+            : (task.steps[i].time + task.steps[i - 1].time) / 1000
         ),
       });
     }
