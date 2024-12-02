@@ -3,7 +3,15 @@ import { View, Text, Button } from "react-native";
 import * as Notifications from "expo-notifications";
 import { List } from "react-native-paper";
 import { getTimeToRenderFromMilliSeconds } from "../utils/timer";
-import { addSeconds } from "date-fns";
+import { addMilliseconds } from "date-fns";
+// import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
+// import {
+//   addNotificationReceivedListener,
+//   addNotificationResponseReceivedListener,
+//   getLastNotificationResponseAsync,
+//   removeNotificationSubscription,
+//   unregisterForNotificationsAsync,
+// } from "expo-notifications";
 
 interface ITimerProps {}
 
@@ -28,60 +36,79 @@ const data = [
     id: "124",
     name: "water plants",
     steps: [
-      { name: "water first floor plants", time: 180000 },
-      { name: "water second floor plants", time: 180000 },
+      { name: "water first floor plants", time: 60000 },
+      { name: "water second floor plants", time: 60000 },
     ],
-    totalTime: 360000,
+    totalTime: 120000,
   },
   {
     id: "125",
     name: "test",
     steps: [
-      { name: "test1", time: 5000 },
-      { name: "test2", time: 5000 },
+      { name: "test1", time: 10000 },
+      { name: "test2", time: 15000 },
     ],
-    totalTime: 10000,
+    totalTime: 11000,
   },
 ];
 
 interface ILocalState {
   expandedAccordionId: string | null;
 }
+function wait(milliSeconds: number) {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res(new Date());
+    }, milliSeconds);
+  });
+}
 
 export const Timer: FC<ITimerProps> = () => {
   const [localState, setLocalState] = useState<ILocalState>({
     expandedAccordionId: null,
   });
+  // const responseListener = useRef<Notifications.EventSubscription>();
 
-  function wait(milliSeconds: number, task: string) {
-    return new Promise((res) => {
-      setTimeout(() => {
-        res(task);
-      }, milliSeconds);
-    });
-  }
+  // useEffect(() => {
+  //   responseListener.current = addNotificationReceivedListener(
+  //     (notification) => {
+  //       console.log("notification", new Date(notification.date));
+  //     }
+  //   );
+  //   return () => {
+  //     removeNotificationSubscription(responseListener.current);
+  //   };
+  // }, []);
 
+  // if (id === localState.expandedAccordionId) {
+  //   return;
+  // }
+  // await Notifications.cancelAllScheduledNotificationsAsync();
   async function handleAccordionPress(id: string) {
-    // if (id === localState.expandedAccordionId) {
-    //   return;
-    // }
-    // await Notifications.cancelAllScheduledNotificationsAsync();
     setLocalState((state) => ({ ...state, expandedAccordionId: id }));
     const task = data.find((d) => d.id === id);
-
+    let cumulativeTime = 0;
     for (let i = 0; i < task.steps.length; i++) {
+      // console.log("current", new Date());
+
+      cumulativeTime += task.steps[i].time;
+      // console.log("scheduled", addMilliseconds(new Date(), cumulativeTime));
+
       Notifications.scheduleNotificationAsync({
         content: {
           title: `${task.steps[i].name} timer completed`,
         },
-        trigger: addSeconds(
-          new Date(),
-          i === 0
-            ? task.steps[i].time / 1000
-            : (task.steps[i].time + task.steps[i - 1].time) / 1000
-        ),
+        trigger: addMilliseconds(new Date(), cumulativeTime),
       });
     }
+    // const res = await Notifications.getAllScheduledNotificationsAsync();
+    // console.log(
+    //   res.map((r) => ({
+    //     //@ts-ignore
+    //     date: new Date(r.trigger.value),
+    //     name: r.content.title,
+    //   }))
+    // );
   }
 
   return (
